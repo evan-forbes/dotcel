@@ -20,7 +20,6 @@ type (
 
 		accountKeeper types.AccountKeeper
 		bankKeeper    types.BankKeeper
-		cqueryKeeper  types.CqueryKeeper
 	}
 )
 
@@ -30,7 +29,7 @@ func NewKeeper(
 	memKey sdk.StoreKey,
 	ps paramtypes.Subspace,
 
-	accountKeeper types.AccountKeeper, bankKeeper types.BankKeeper, cqueryKeeper types.CqueryKeeper,
+	accountKeeper types.AccountKeeper, bankKeeper types.BankKeeper,
 ) *Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
@@ -43,7 +42,7 @@ func NewKeeper(
 		storeKey:      storeKey,
 		memKey:        memKey,
 		paramstore:    ps,
-		accountKeeper: accountKeeper, bankKeeper: bankKeeper, cqueryKeeper: cqueryKeeper,
+		accountKeeper: accountKeeper, bankKeeper: bankKeeper,
 	}
 }
 

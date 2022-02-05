@@ -392,7 +392,6 @@ func New(
 
 		app.AccountKeeper,
 		app.BankKeeper,
-		app.CqueryKeeper,
 	)
 	kvstoreModule := kvstoremodule.NewAppModule(appCodec, app.KvstoreKeeper, app.AccountKeeper, app.BankKeeper)
 
