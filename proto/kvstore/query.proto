@@ -5,6 +5,7 @@ import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "kvstore/params.proto";
+import "kvstore/domain.proto";
 // this line is used by starport scaffolding # 1
 
 option go_package = "github.com/celestiaorg/dotcel/x/kvstore/types";
@@ -15,7 +16,17 @@ service Query {
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/celestiaorg/dotcel/kvstore/params";
   }
-  // this line is used by starport scaffolding # 2
+  // Queries a Domain by index.
+	rpc Domain(QueryGetDomainRequest) returns (QueryGetDomainResponse) {
+		option (google.api.http).get = "/celestiaorg/dotcel/kvstore/domain/{name}";
+	}
+
+	// Queries a list of Domain items.
+	rpc DomainAll(QueryAllDomainRequest) returns (QueryAllDomainResponse) {
+		option (google.api.http).get = "/celestiaorg/dotcel/kvstore/domain";
+	}
+
+// this line is used by starport scaffolding # 2
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
@@ -25,6 +36,24 @@ message QueryParamsRequest {}
 message QueryParamsResponse {
   // params holds all the parameters of this module.
   Params params = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryGetDomainRequest {
+	  string name = 1;
+
+}
+
+message QueryGetDomainResponse {
+	Domain domain = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllDomainRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllDomainResponse {
+	repeated Domain domain = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // this line is used by starport scaffolding # 3
