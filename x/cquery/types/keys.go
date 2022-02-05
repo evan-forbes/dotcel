@@ -15,6 +15,8 @@ const (
 
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_cquery"
+
+	RPCIPFlag = "rpcIP"
 )
 
 func KeyPrefix(p string) []byte {

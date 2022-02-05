@@ -2,7 +2,7 @@ package app
 
 import (
 	"io"
-	"net/http"
+	stdhttp "net/http"
 	"os"
 	"path/filepath"
 
@@ -85,6 +85,7 @@ import (
 	tmjson "github.com/tendermint/tendermint/libs/json"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
+	"github.com/tendermint/tendermint/rpc/client/http"
 	dbm "github.com/tendermint/tm-db"
 
 	"github.com/tendermint/starport/starport/pkg/cosmoscmd"
@@ -253,6 +254,19 @@ func New(
 	appOpts servertypes.AppOptions,
 	baseAppOptions ...func(*baseapp.BaseApp),
 ) cosmoscmd.App {
+	// todo(evan) probably put this somewhere else
+	rpcIP := cast.ToString(appOpts.Get(cquerymoduletypes.RPCIPFlag))
+	if rpcIP == "" {
+		logger.Error("no rpc IP provided, cannot start app")
+		return nil
+	}
+
+	celestiaClient, err := http.New(rpcIP, "/websocket")
+	if err != nil {
+		logger.Error("could not create rpc connection to celestia node", "error", err)
+		return nil
+	}
+
 	appCodec := encodingConfig.Marshaler
 	cdc := encodingConfig.Amino
 	interfaceRegistry := encodingConfig.InterfaceRegistry
@@ -381,6 +395,7 @@ func New(
 		keys[cquerymoduletypes.StoreKey],
 		keys[cquerymoduletypes.MemStoreKey],
 		app.GetSubspace(cquerymoduletypes.ModuleName),
+		celestiaClient,
 	)
 	cqueryModule := cquerymodule.NewAppModule(appCodec, app.CqueryKeeper, app.AccountKeeper, app.BankKeeper)
 
@@ -648,7 +663,7 @@ func (app *App) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig
 	ModuleBasics.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
 
 	// register app's OpenAPI routes.
-	apiSvr.Router.Handle("/static/openapi.yml", http.FileServer(http.FS(docs.Docs)))
+	apiSvr.Router.Handle("/static/openapi.yml", stdhttp.FileServer(stdhttp.FS(docs.Docs)))
 	apiSvr.Router.HandleFunc("/", openapiconsole.Handler(Name, "/static/openapi.yml"))
 }
 
