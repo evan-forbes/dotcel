@@ -1,0 +1,14 @@
+syntax = "proto3";
+package celestiaorg.dotcel.cquery;
+
+import "gogoproto/gogo.proto";
+import "cquery/params.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "github.com/celestiaorg/dotcel/x/cquery/types";
+
+// GenesisState defines the cquery module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+  // this line is used by starport scaffolding # genesis/proto/state
+}

@@ -1,0 +1,13 @@
+syntax = "proto3";
+package celestiaorg.dotcel.kvstore;
+
+// this line is used by starport scaffolding # proto/tx/import
+
+option go_package = "github.com/celestiaorg/dotcel/x/kvstore/types";
+
+// Msg defines the Msg service.
+service Msg {
+    // this line is used by starport scaffolding # proto/tx/rpc
+}
+
+// this line is used by starport scaffolding # proto/tx/message

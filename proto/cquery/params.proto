@@ -1,0 +1,12 @@
+syntax = "proto3";
+package celestiaorg.dotcel.cquery;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/celestiaorg/dotcel/x/cquery/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  
+}

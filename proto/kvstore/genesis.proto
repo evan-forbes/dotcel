@@ -1,0 +1,14 @@
+syntax = "proto3";
+package celestiaorg.dotcel.kvstore;
+
+import "gogoproto/gogo.proto";
+import "kvstore/params.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "github.com/celestiaorg/dotcel/x/kvstore/types";
+
+// GenesisState defines the kvstore module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+  // this line is used by starport scaffolding # genesis/proto/state
+}

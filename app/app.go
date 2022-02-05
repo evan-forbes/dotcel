@@ -92,9 +92,15 @@ import (
 
 	"github.com/celestiaorg/dotcel/docs"
 
+	cquerymodule "github.com/celestiaorg/dotcel/x/cquery"
+	cquerymodulekeeper "github.com/celestiaorg/dotcel/x/cquery/keeper"
+	cquerymoduletypes "github.com/celestiaorg/dotcel/x/cquery/types"
 	dotcelmodule "github.com/celestiaorg/dotcel/x/dotcel"
 	dotcelmodulekeeper "github.com/celestiaorg/dotcel/x/dotcel/keeper"
 	dotcelmoduletypes "github.com/celestiaorg/dotcel/x/dotcel/types"
+	kvstoremodule "github.com/celestiaorg/dotcel/x/kvstore"
+	kvstoremodulekeeper "github.com/celestiaorg/dotcel/x/kvstore/keeper"
+	kvstoremoduletypes "github.com/celestiaorg/dotcel/x/kvstore/types"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 )
 
@@ -148,6 +154,8 @@ var (
 		transfer.AppModuleBasic{},
 		vesting.AppModuleBasic{},
 		dotcelmodule.AppModuleBasic{},
+		cquerymodule.AppModuleBasic{},
+		kvstoremodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -160,6 +168,7 @@ var (
 		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
+		kvstoremoduletypes.ModuleName:  {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 )
@@ -218,6 +227,10 @@ type App struct {
 	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
 
 	DotcelKeeper dotcelmodulekeeper.Keeper
+
+	CqueryKeeper cquerymodulekeeper.Keeper
+
+	KvstoreKeeper kvstoremodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -255,6 +268,8 @@ func New(
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey, feegrant.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		dotcelmoduletypes.StoreKey,
+		cquerymoduletypes.StoreKey,
+		kvstoremoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -361,6 +376,26 @@ func New(
 	)
 	dotcelModule := dotcelmodule.NewAppModule(appCodec, app.DotcelKeeper, app.AccountKeeper, app.BankKeeper)
 
+	app.CqueryKeeper = *cquerymodulekeeper.NewKeeper(
+		appCodec,
+		keys[cquerymoduletypes.StoreKey],
+		keys[cquerymoduletypes.MemStoreKey],
+		app.GetSubspace(cquerymoduletypes.ModuleName),
+	)
+	cqueryModule := cquerymodule.NewAppModule(appCodec, app.CqueryKeeper, app.AccountKeeper, app.BankKeeper)
+
+	app.KvstoreKeeper = *kvstoremodulekeeper.NewKeeper(
+		appCodec,
+		keys[kvstoremoduletypes.StoreKey],
+		keys[kvstoremoduletypes.MemStoreKey],
+		app.GetSubspace(kvstoremoduletypes.ModuleName),
+
+		app.AccountKeeper,
+		app.BankKeeper,
+		app.CqueryKeeper,
+	)
+	kvstoreModule := kvstoremodule.NewAppModule(appCodec, app.KvstoreKeeper, app.AccountKeeper, app.BankKeeper)
+
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
 	// Create static IBC router, add transfer route, then set and seal it
@@ -400,6 +435,8 @@ func New(
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
 		dotcelModule,
+		cqueryModule,
+		kvstoreModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -435,6 +472,8 @@ func New(
 		evidencetypes.ModuleName,
 		ibctransfertypes.ModuleName,
 		dotcelmoduletypes.ModuleName,
+		cquerymoduletypes.ModuleName,
+		kvstoremoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
 
@@ -458,6 +497,8 @@ func New(
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
 		dotcelModule,
+		cqueryModule,
+		kvstoreModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 	app.sm.RegisterStoreDecoders()
@@ -646,6 +687,8 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)
 	paramsKeeper.Subspace(dotcelmoduletypes.ModuleName)
+	paramsKeeper.Subspace(cquerymoduletypes.ModuleName)
+	paramsKeeper.Subspace(kvstoremoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper
