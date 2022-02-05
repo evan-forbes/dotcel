@@ -1,0 +1,12 @@
+syntax = "proto3";
+package celestiaorg.dotcel.dotcel;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/celestiaorg/dotcel/x/dotcel/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  
+}
