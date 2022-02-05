@@ -7,7 +7,18 @@ option go_package = "github.com/celestiaorg/dotcel/x/kvstore/types";
 
 // Msg defines the Msg service.
 service Msg {
-    // this line is used by starport scaffolding # proto/tx/rpc
+      rpc Buy(MsgBuy) returns (MsgBuyResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
+}
+
+message MsgBuy {
+  string signer = 1;
+  string name = 2;
+  string until = 3;
+  string fee = 4;
+}
+
+message MsgBuyResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

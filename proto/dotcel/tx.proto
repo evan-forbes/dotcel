@@ -7,7 +7,16 @@ option go_package = "github.com/celestiaorg/dotcel/x/dotcel/types";
 
 // Msg defines the Msg service.
 service Msg {
-    // this line is used by starport scaffolding # proto/tx/rpc
+      rpc ClaimDeposit(MsgClaimDeposit) returns (MsgClaimDepositResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
+}
+
+message MsgClaimDeposit {
+  string signer = 1;
+  string hash = 2;
+}
+
+message MsgClaimDepositResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

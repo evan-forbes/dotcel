@@ -1,0 +1,9 @@
+syntax = "proto3";
+package celestiaorg.dotcel.cquery;
+
+option go_package = "github.com/celestiaorg/dotcel/x/cquery/types";
+
+message DepositByHash {
+  
+  string hash = 1; 
+}
