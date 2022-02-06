@@ -10,7 +10,7 @@ import (
 )
 
 func TestParamsQuery(t *testing.T) {
-	keeper, ctx := testkeeper.CqueryKeeper(t)
+	keeper, ctx := testkeeper.CqueryKeeper(t, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	params := types.DefaultParams()
 	keeper.SetParams(ctx, params)

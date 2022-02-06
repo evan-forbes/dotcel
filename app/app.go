@@ -390,12 +390,14 @@ func New(
 	)
 	dotcelModule := dotcelmodule.NewAppModule(appCodec, app.DotcelKeeper, app.AccountKeeper, app.BankKeeper)
 
+	txGetter := &cquerymoduletypes.HttpTxGetter{Client: celestiaClient}
+
 	app.CqueryKeeper = *cquerymodulekeeper.NewKeeper(
 		appCodec,
 		keys[cquerymoduletypes.StoreKey],
 		keys[cquerymoduletypes.MemStoreKey],
 		app.GetSubspace(cquerymoduletypes.ModuleName),
-		celestiaClient,
+		txGetter.Get,
 	)
 	cqueryModule := cquerymodule.NewAppModule(appCodec, app.CqueryKeeper, app.AccountKeeper, app.BankKeeper)
 

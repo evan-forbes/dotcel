@@ -7,5 +7,5 @@ import (
 )
 
 func (k Keeper) DepositByHash(ctx context.Context, hash []byte) (*coretypes.ResultTx, error) {
-	return k.client.Tx(ctx, hash, false)
+	return k.txGetter(ctx, hash)
 }
